@@ -5,7 +5,7 @@ import Player from '../player/player';
 import io from 'socket.io-client';
 
 
-const socket = io.connect('https://test-game-monster-lovers.herokuapp.com/');
+const socket = io.connect('https://test-game-monster-lovers.herokuapp.com:3000');
 
 export default function Engine() {
     const [player, setPlayer] = useState(new Player);
