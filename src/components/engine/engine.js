@@ -33,27 +33,24 @@ export default function Engine() {
     const handleKeyPress = (e) => {
         e.preventDefault();
         console.log(userName);
-        console.log(userName);
-        setTimeout(() => {
-            if (userName) {
+        if (userName) {
 
-                if (e.key === 'ArrowUp') {
-                    socket.emit('MOVE_PLAYER', { dir: 'up', user: userName });
-                }
-                if (e.key === 'ArrowDown') {
-
-                    socket.emit('MOVE_PLAYER', { dir: 'down', user: userName });
-                }
-
-                if (e.key === 'ArrowLeft') {
-                    socket.emit('MOVE_PLAYER', { dir: 'left', user: userName });
-                }
-
-                if (e.key === 'ArrowRight') {
-                    socket.emit('MOVE_PLAYER', { dir: 'right', user: userName });
-                }
+            if (e.key === 'ArrowUp') {
+                socket.emit('MOVE_PLAYER', { dir: 'up', user: userName });
             }
-        }, 500);
+            if (e.key === 'ArrowDown') {
+
+                socket.emit('MOVE_PLAYER', { dir: 'down', user: userName });
+            }
+
+            if (e.key === 'ArrowLeft') {
+                socket.emit('MOVE_PLAYER', { dir: 'left', user: userName });
+            }
+
+            if (e.key === 'ArrowRight') {
+                socket.emit('MOVE_PLAYER', { dir: 'right', user: userName });
+            }
+        }
     };
 
 
