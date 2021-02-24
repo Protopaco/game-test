@@ -6,7 +6,7 @@ import styles from '../engine/engine.module.scss';
 export default function Player() {
     const [example, setExample] = useState(null);
     let orientation = 'left';
-    let animation = 0;
+    const animation = 0;
     let idle = 0;
     let sprite = `/idle/adventurer-idle-0${idle}.png`;
     this.position = { x: 0, y: 0 };
@@ -35,10 +35,7 @@ export default function Player() {
         }
     };
 
-    const runAnimation = () => {
-        animation < 5 ? animation++ : animation = 0;
-        sprite = `/run3/adventurer-run3-0${animation}.png`;
-    };
+
 
     this.idle = () => {
         setExample(idle);

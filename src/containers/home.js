@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
-const socket = io.connect('http://localhost:3000');
+const serverUrl = process.env.SERVER_URL;
+const socket = io.connect(serverUrl);
 
 export default function Home() {
     const [input, setInput] = useState({ message: '', user: '' });

@@ -1,42 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import styles from './engine.module.scss';
 import { useEvent } from '../../hooks/';
-import Player from '../player/player';
+import Player from '../Player/Player';
 import io from 'socket.io-client';
 
 
-const socket = io.connect('https://test-game-monster-lovers.herokuapp.com');
+const serverUrl = process.env.SERVER_URL;
+const socket = io.connect(serverUrl);
 
 export default function Engine() {
-    const [player, setPlayer] = useState(new Player);
-    const [position, setPosition] = useState({ x: 0, y: 0 });
     const [userArray, setUserArray] = useState([]);
     const [userName, setUserName] = useState();
-    const [userId, setUserId] = useState();
+    // const [animationFrame, setAnimationFrame] = useState(0);
 
     useEffect(() => {
         socket.on('MOVE_PLAYER', response => {
             setUserArray(response);
-            console.log(response);
         });
 
-        socket.on('CREATE_USER', newUser => {
-            setPosition(newUser.position);
+        socket.on('CREATE_USER', ({ userArray, newUser }) => {
             setUserName(newUser.user);
+            setUserArray(userArray);
             console.log(newUser);
         });
-    });
+    }, [socket]);
 
     useEffect(() => {
-        socket.emit('CREATE_USER', userId);
+        socket.emit('CREATE_USER', '');
+
     }, []);
-
-
 
     const handleKeyPress = (e) => {
         e.preventDefault();
         if (e.key === 'ArrowUp') {
-            console.log('up');
             socket.emit('MOVE_PLAYER', { dir: 'up', user: userName });
         }
         if (e.key === 'ArrowDown') {
@@ -54,29 +50,17 @@ export default function Engine() {
     };
 
 
-    useEvent('keyup', handleKeyPress);
+    useEvent('keydown', handleKeyPress);
 
 
     const renderUsers = () => {
-        return (
-            <div>
-                {userArray.map(user => {
-                    return (
-                        <div
-                            className={styles.character}
-                            style={{
-                                transform: `translate(${user.position.x}px, ${user.position.y}px)`
-                            }}
-                        >
-                            <img
-                                src={'/idle/adventurer-idle-00.png'}
-                            />
-                        </div>
-                    );
-                })
-                }
-            </div>
-        );
+        return userArray.map(user => {
+            return <Player
+                key={user.id}
+                position={user.position}
+                direction={user.dir}
+            />;
+        });
     };
 
     return (
