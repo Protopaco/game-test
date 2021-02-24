@@ -12,7 +12,7 @@ export default function Player({ position, direction }) {
         if (currentPosition.x !== position.x || currentPosition.y !== position.y) {
             runAnimation();
         } else {
-            idleAnimation();
+
         }
         setCurrentPosition(position);
     }, [position]);
