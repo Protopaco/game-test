@@ -4,8 +4,7 @@ import { useEvent } from '../../hooks/';
 import Player from '../Player/Player';
 import io from 'socket.io-client';
 
-
-const serverUrl = process.env.SERVER_URL;
+const serverUrl = process.env.REACT_APP_SERVER_URL;
 const socket = io.connect(serverUrl);
 
 export default function Engine() {
@@ -27,15 +26,12 @@ export default function Engine() {
 
     useEffect(() => {
         socket.emit('CREATE_USER', '');
-
     }, []);
 
     const handleKeyPress = (e) => {
         e.preventDefault();
-        console.log(userName);
-        console.log(userName);
-        if (userName) {
 
+        if (userName) {
             if (e.key === 'ArrowUp') {
                 socket.emit('MOVE_PLAYER', { dir: 'up', user: userName });
             }
@@ -51,6 +47,9 @@ export default function Engine() {
             if (e.key === 'ArrowRight') {
                 socket.emit('MOVE_PLAYER', { dir: 'right', user: userName });
             }
+            setTimeout(() => {
+                socket.emit('MOVE_PLAYER', { dir: 'idle', user: userName });
+            }, 1000);
         }
     };
 

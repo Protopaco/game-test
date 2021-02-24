@@ -11,8 +11,8 @@ export default function Player({ position, direction }) {
     useEffect(() => {
         if (currentPosition.x !== position.x || currentPosition.y !== position.y) {
             runAnimation();
-        } else {
-
+        } else if (direction === 'idle') {
+            idleAnimation();
         }
         setCurrentPosition(position);
     }, [position]);
