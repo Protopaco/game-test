@@ -1,6 +1,6 @@
 import React from 'react';
-import Home from '../../containers/home';
+import Engine from '../engine/engine.js';
 
 export default function App() {
-  return (<Home />);
+  return (<Engine />);
 }
