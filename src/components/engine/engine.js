@@ -25,15 +25,9 @@ export default function Engine() {
             setUserName(newUser.user);
             console.log(newUser);
         });
-
-        socket.on('RETURN_ID', id => {
-            setUserId(id);
-            console.log(id);
-        });
     });
 
     useEffect(() => {
-        console.log(userId);
         socket.emit('CREATE_USER', userId);
     }, []);
 
@@ -46,6 +40,7 @@ export default function Engine() {
             socket.emit('MOVE_PLAYER', { dir: 'up', user: userName });
         }
         if (e.key === 'ArrowDown') {
+
             socket.emit('MOVE_PLAYER', { dir: 'down', user: userName });
         }
 
@@ -59,7 +54,7 @@ export default function Engine() {
     };
 
 
-    useEvent('keydown', handleKeyPress);
+    useEvent('keyup', handleKeyPress);
 
 
     const renderUsers = () => {
