@@ -7,8 +7,8 @@ export default function Player() {
     const [example, setExample] = useState(null);
     let orientation = 'left';
     const animation = 0;
-    let idle = 0;
-    let sprite = `/idle/adventurer-idle-0${idle}.png`;
+    const idle = 0;
+    const sprite = `/idle/adventurer-idle-0${idle}.png`;
     this.position = { x: 0, y: 0 };
 
     this.move = (direction) => {
@@ -37,11 +37,7 @@ export default function Player() {
 
 
 
-    this.idle = () => {
-        setExample(idle);
-        idle < 3 ? idle++ : idle = 0;
-        sprite = `/idle/adventurer-idle-0${idle}.png`;
-    };
+
 
 
 
