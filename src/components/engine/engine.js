@@ -9,18 +9,28 @@ const socket = io.connect(serverUrl);
 
 export default function Engine() {
     const [userArray, setUserArray] = useState([]);
-    const [userName, setUserName] = useState();
+    const [localUser, setLocalUser] = useState({
+        user: 'tempPlayer',
+        position: { x: 25, y: 25 },
+        id: 'temp',
+        speed: 25,
+        dir: 'idle'
+    });
     // const [animationFrame, setAnimationFrame] = useState(0);
 
     useEffect(() => {
         socket.on('MOVE_PLAYER', response => {
+            const userIndex = response.findIndex(element => {
+                return element.user === localUser.user;
+            });
+            response.splice(userIndex, 1);
             setUserArray(response);
+            console.log(response);
         });
 
         socket.on('CREATE_USER', ({ userArray, newUser }) => {
-            setUserName(newUser.user);
+            setLocalUser(newUser);
             setUserArray(userArray);
-            console.log(newUser);
         });
     }, [socket]);
 
@@ -30,31 +40,78 @@ export default function Engine() {
 
     const handleKeyPress = (e) => {
         e.preventDefault();
-
-        if (userName) {
+        const { position, speed } = localUser;
+        if (localUser) {
             if (e.key === 'ArrowUp') {
-                socket.emit('MOVE_PLAYER', { dir: 'up', user: userName });
+                setLocalUser({
+                    ...localUser,
+                    position: {
+                        x: position.x,
+                        y: position.y - speed
+                    },
+                    dir: 'up'
+                });
+                socket.emit('MOVE_PLAYER', { user: localUser, });
             }
             if (e.key === 'ArrowDown') {
-
-                socket.emit('MOVE_PLAYER', { dir: 'down', user: userName });
+                setLocalUser({
+                    ...localUser,
+                    position: {
+                        x: position.x,
+                        y: position.y + speed
+                    },
+                    dir: 'down',
+                });
+                socket.emit('MOVE_PLAYER', { user: localUser, });
             }
-
             if (e.key === 'ArrowLeft') {
-                socket.emit('MOVE_PLAYER', { dir: 'left', user: userName });
+                setLocalUser({
+                    ...localUser,
+                    position: {
+                        x: position.x - speed,
+                        y: position.y
+                    },
+                    dir: 'left'
+                });
+                socket.emit('MOVE_PLAYER', { user: localUser, });
             }
-
             if (e.key === 'ArrowRight') {
-                socket.emit('MOVE_PLAYER', { dir: 'right', user: userName });
+                setLocalUser({
+                    ...localUser,
+                    position: {
+                        x: position.x + speed,
+                        y: position.y,
+                        dir: 'right',
+                    }
+                });
+                socket.emit('MOVE_PLAYER', { user: localUser, });
             }
             setTimeout(() => {
-                socket.emit('MOVE_PLAYER', { dir: 'idle', user: userName });
+                socket.emit('MOVE_PLAYER', {
+                    user:
+                    {
+                        ...localUser,
+                        dir: 'idle'
+                    }
+                });
             }, 1000);
         }
     };
 
     useEvent('keydown', handleKeyPress);
 
+<<<<<<< HEAD
+=======
+    const gameloop = () => {
+
+
+        setInterval(() => {
+            requestAnimationFrame(gameloop());
+        }, 100);
+    };
+
+
+>>>>>>> e226ac6e83467a739dedc84c77da9f13aa05a5f5
     const renderUsers = () => {
         return userArray.map(user => {
             return <Player
@@ -67,6 +124,11 @@ export default function Engine() {
 
     return (
         <div className={styles.container}>
+            <Player
+                key={localUser.id}
+                position={localUser.position}
+                direction={localUser.dir}
+            />
             {renderUsers()}
         </div>
     );
