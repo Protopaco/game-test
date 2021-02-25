@@ -100,18 +100,6 @@ export default function Engine() {
 
     useEvent('keydown', handleKeyPress);
 
-<<<<<<< HEAD
-=======
-    const gameloop = () => {
-
-
-        setInterval(() => {
-            requestAnimationFrame(gameloop());
-        }, 100);
-    };
-
-
->>>>>>> e226ac6e83467a739dedc84c77da9f13aa05a5f5
     const renderUsers = () => {
         return userArray.map(user => {
             return <Player
