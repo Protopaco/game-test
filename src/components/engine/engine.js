@@ -25,6 +25,7 @@ export default function Engine() {
             });
             response.splice(userIndex, 1);
             setUserArray(response);
+            console.log(response);
         });
 
         socket.on('CREATE_USER', ({ userArray, newUser }) => {
