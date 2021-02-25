@@ -13,12 +13,10 @@ export default function Engine() {
 
     useEffect(() => {
         socket.on('MOVE_PLAYER', response => {
-            console.log(response);
             setUserArray(response);
         });
 
         socket.on('CREATE_USER', ({ newUser, userArray }) => {
-            console.log(newUser);
             setLocalUser(newUser);
             setUserArray(userArray);
         });
@@ -32,7 +30,6 @@ export default function Engine() {
         e.preventDefault();
 
         if (localUser) {
-            console.log(localUser);
             if (e.key === 'ArrowUp') {
                 socket.emit('MOVE_PLAYER', { ...localUser, dir: 'up' });
             }
