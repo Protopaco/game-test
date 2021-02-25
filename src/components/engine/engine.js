@@ -53,9 +53,7 @@ export default function Engine() {
         }
     };
 
-
     useEvent('keydown', handleKeyPress);
-
 
     const renderUsers = () => {
         return userArray.map(user => {
@@ -73,3 +71,4 @@ export default function Engine() {
         </div>
     );
 }
+
