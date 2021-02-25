@@ -36,7 +36,10 @@ export default function Home() {
         <div>
             <div>
                 <form onSubmit={handleClick}>
-                    <input type="text" onChange={e => setInput({ message: e.target.value, user: '' })} value={input.message} />
+                    <input
+                        type="text"
+                        onChange={e => setInput({ message: e.target.value, user: '' })}
+                        value={input.message} />
                 </form>
             </div>
             <div>

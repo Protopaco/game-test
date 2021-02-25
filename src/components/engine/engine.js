@@ -7,43 +7,91 @@ import io from 'socket.io-client';
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 const socket = io.connect(serverUrl);
 
+const CHANGE_POSITION = {
+    UP: (position, speed) => {
+        return {
+            x: position.x,
+            y: position.y - speed
+        };
+    },
+    DOWN: (position, speed) => {
+        return {
+            x: position.x,
+            y: position.y + speed
+        };
+    },
+    LEFT: (position, speed) => {
+        return {
+            x: position.x - speed,
+            y: position.y
+        };
+    },
+    RIGHT: (position, speed) => {
+        return {
+            x: position.x + speed,
+            y: position.y
+        };
+    },
+};
+
 export default function Engine() {
     const [userArray, setUserArray] = useState([]);
     const [localUser, setLocalUser] = useState();
+    const [disable, setDisable] = useState(false);
 
     useEffect(() => {
-        socket.on('MOVE_PLAYER', response => {
-            setUserArray(response);
-        });
-
         socket.on('CREATE_USER', ({ newUser, userArray }) => {
+            console.log(newUser);
             setLocalUser(newUser);
             setUserArray(userArray);
+        });
+
+        socket.on('GAME_STATE', response => {
+            setUserArray(response);
+            setDisable(false);
         });
     }, [socket]);
 
     useEffect(() => {
-        socket.emit('CREATE_USER', '');
+        socket.emit('CREATE_USER', null);
+
+        setInterval(() => {
+            socket.emit('GAME_STATE', null);
+        }, 500);
     }, []);
+
 
     const handleKeyPress = (e) => {
         e.preventDefault();
 
-        if (localUser) {
+        if (localUser && !disable) {
+            setDisable(true);
+            const { position, speed, id } = localUser;
             if (e.key === 'ArrowUp') {
-                socket.emit('MOVE_PLAYER', { ...localUser, dir: 'up' });
+                const newPosition = CHANGE_POSITION.UP(position, speed);
+                setLocalUser({ ...localUser, position: newPosition });
+                socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'up' });
             }
             if (e.key === 'ArrowDown') {
-                socket.emit('MOVE_PLAYER', { ...localUser, dir: 'down' });
+                const newPosition = CHANGE_POSITION.DOWN(position, speed);
+
+                setLocalUser({ ...localUser, position: newPosition });
+                socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'down' });
             }
             if (e.key === 'ArrowLeft') {
-                socket.emit('MOVE_PLAYER', { ...localUser, dir: 'left' });
+                const newPosition = CHANGE_POSITION.LEFT(position, speed);
+
+                setLocalUser({ ...localUser, position: newPosition, dir: 'left' });
+                socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'left' });
             }
             if (e.key === 'ArrowRight') {
-                socket.emit('MOVE_PLAYER', { ...localUser, dir: 'right' });
+                const newPosition = CHANGE_POSITION.RIGHT(position, speed);
+
+                setLocalUser({ ...localUser, position: newPosition, dir: 'right' });
+                socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'right' });
             }
             setTimeout(() => {
-                socket.emit('MOVE_PLAYER', { ...localUser, dir: 'idle' });
+                socket.emit('MOVE_PLAYER', { id, position: localUser.position, dir: 'idle' });
             }, 1000);
         }
     };
@@ -63,6 +111,13 @@ export default function Engine() {
     return (
         <div className={styles.container}>
             {renderUsers()}
+            {localUser ?
+                <Player
+                    key={localUser.id}
+                    position={localUser.position}
+                    direction={localUser.dir}
+                />
+                : null}
         </div>
     );
 }
