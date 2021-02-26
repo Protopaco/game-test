@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './engine.module.scss';
 import { useEvent } from '../../hooks/';
 import Player from '../Player/Player';
@@ -36,17 +36,18 @@ const CHANGE_POSITION = {
 
 export default function Engine() {
     const [userArray, setUserArray] = useState([]);
-    const [localUser, setLocalUser] = useState();
+    const localUser = useRef(null);
     const [disable, setDisable] = useState(false);
 
     useEffect(() => {
         socket.on('CREATE_USER', ({ newUser, userArray }) => {
             console.log(newUser);
-            setLocalUser(newUser);
+            localUser.current = newUser;
             setUserArray(userArray);
         });
 
         socket.on('GAME_STATE', response => {
+            console.log(localUser.current);
             setUserArray(response);
             setDisable(false);
         });
@@ -54,51 +55,43 @@ export default function Engine() {
 
     useEffect(() => {
         socket.emit('CREATE_USER', null);
+
         setInterval(() => {
-            socket.emit('GAME_STATE', null);
-        }, 300);
-        setInterval(() => {
-            animate();
-        });
+            socket.emit('GAME_STATE', localUser.current);
+        }, 500);
 
     }, []);
-
-    const animate = () => {
-        return 1;
-    };
 
 
     const handleKeyPress = (e) => {
         e.preventDefault();
-
-        if (localUser && !disable) {
+        if (localUser.current && !disable) {
             setDisable(true);
-            const { position, speed, id } = localUser;
+            const { position, speed, id } = localUser.current;
             if (e.key === 'ArrowUp') {
                 const newPosition = CHANGE_POSITION.UP(position, speed);
-                setLocalUser({ ...localUser, position: newPosition });
-                socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'up' });
+                localUser.current = { ...localUser.current, position: newPosition };
+                // socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'up' });
             }
             if (e.key === 'ArrowDown') {
                 const newPosition = CHANGE_POSITION.DOWN(position, speed);
-
-                setLocalUser({ ...localUser, position: newPosition });
-                socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'down' });
+                localUser.current = { ...localUser.current, position: newPosition };
+                // socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'down' });
             }
             if (e.key === 'ArrowLeft') {
                 const newPosition = CHANGE_POSITION.LEFT(position, speed);
 
-                setLocalUser({ ...localUser, position: newPosition, dir: 'left' });
-                socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'left' });
+                localUser.current = { ...localUser.current, position: newPosition, dir: 'left' };
+                // socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'left' });
             }
             if (e.key === 'ArrowRight') {
                 const newPosition = CHANGE_POSITION.RIGHT(position, speed);
 
-                setLocalUser({ ...localUser, position: newPosition, dir: 'right' });
-                socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'right' });
+                localUser.current = { ...localUser.current, position: newPosition, dir: 'right' };
+                // socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'right' });
             }
             setTimeout(() => {
-                socket.emit('MOVE_PLAYER', { id, position: localUser.position, dir: 'idle' });
+                localUser.current = { ...localUser.current };
             }, 1000);
         }
     };
@@ -118,11 +111,11 @@ export default function Engine() {
     return (
         <div className={styles.container}>
             {renderUsers()}
-            {localUser ?
+            {localUser.current ?
                 <Player
-                    key={localUser.id}
-                    position={localUser.position}
-                    direction={localUser.dir}
+                    key={localUser.current.id}
+                    position={localUser.current.position}
+                    direction={localUser.current.dir}
                 />
                 : null}
         </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from '../engine/engine.module.scss';
 
 
-export default function Player({ position, direction, animate }) {
+export default function Player({ position, direction }) {
     const [frame, setFrame] = useState(0);
     const [sprite, setSprite] = useState('/run3/adventurer-run3-00.png');
     const [currentPosition, setCurrentPosition] = useState({ x: 0, y: 0 });
@@ -12,7 +12,7 @@ export default function Player({ position, direction, animate }) {
 
         setTimeout(() => {
             runAnimation();
-        }, 100);
+        }, 120);
     }, [frame]);
 
     const runAnimation = () => {
