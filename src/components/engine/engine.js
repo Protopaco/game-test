@@ -3,6 +3,9 @@ import styles from './engine.module.scss';
 import { useEvent } from '../../hooks/';
 import Player from '../Player/Player';
 import io from 'socket.io-client';
+import Wall from '../Wall/Wall';
+import checkCollision from '../../utils/checkCollision';
+
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 const socket = io.connect(serverUrl);
@@ -33,6 +36,41 @@ const CHANGE_POSITION = {
         };
     },
 };
+
+
+const Wall1 = {
+    position: { x: 25, y: 25 },
+    dimension: { x: 25, y: 800 }
+};
+
+const Wall2 = {
+    position: { x: 50, y: 25 },
+    dimension: { x: 450, y: 25 }
+};
+
+const Wall3 = {
+    position: { x: 50, y: 475 },
+    dimension: { x: 300, y: 25 }
+};
+
+const Wall4 = {
+    position: { x: 475, y: 50 },
+    dimension: { x: 25, y: 800 }
+};
+
+const Wall5 = {
+    position: { x: 25, y: 825 },
+    dimension: { x: 450, y: 25 }
+};
+
+const Island1 = {
+    position: { x: 175, y: 175 },
+    dimension: { x: 75, y: 75 }
+};
+
+
+
+const objectArray = [Wall1, Wall2, Wall3, Wall4, Wall5, Island1];
 
 export default function Engine() {
     const [userArray, setUserArray] = useState([]);
@@ -65,28 +103,50 @@ export default function Engine() {
         e.preventDefault();
         if (localUser.current && !disable) {
             setDisable(true);
-            const { position, speed, id } = localUser.current;
+            const { position, speed, dimension } = localUser.current;
             if (e.key === 'ArrowUp') {
                 const newPosition = CHANGE_POSITION.UP(position, speed);
-                localUser.current = { ...localUser.current, position: newPosition };
-                // socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'up' });
+
+                if (checkCollision(objectArray, newPosition, dimension)) {
+                    localUser.current = {
+                        ...localUser.current,
+                        position: newPosition,
+                        dir: 'up'
+                    };
+                }
             }
             if (e.key === 'ArrowDown') {
                 const newPosition = CHANGE_POSITION.DOWN(position, speed);
-                localUser.current = { ...localUser.current, position: newPosition };
-                // socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'down' });
+
+                if (checkCollision(objectArray, newPosition, dimension)) {
+                    localUser.current = {
+                        ...localUser.current,
+                        position: newPosition,
+                        dir: 'down'
+                    };
+                }
             }
             if (e.key === 'ArrowLeft') {
                 const newPosition = CHANGE_POSITION.LEFT(position, speed);
 
-                localUser.current = { ...localUser.current, position: newPosition, dir: 'left' };
-                // socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'left' });
+                if (checkCollision(objectArray, newPosition, dimension)) {
+                    localUser.current = {
+                        ...localUser.current,
+                        position: newPosition,
+                        dir: 'left'
+                    };
+                }
             }
             if (e.key === 'ArrowRight') {
                 const newPosition = CHANGE_POSITION.RIGHT(position, speed);
 
-                localUser.current = { ...localUser.current, position: newPosition, dir: 'right' };
-                // socket.emit('MOVE_PLAYER', { id, position: newPosition, dir: 'right' });
+                if (checkCollision(objectArray, newPosition, dimension)) {
+                    localUser.current = {
+                        ...localUser.current,
+                        position: newPosition,
+                        dir: 'right'
+                    };
+                }
             }
             setTimeout(() => {
                 localUser.current = { ...localUser.current };
@@ -106,8 +166,19 @@ export default function Engine() {
         });
     };
 
+    const renderWalls = objectArray => {
+        return objectArray.map(({ position, dimension }, index) => {
+            return <Wall
+                key={index}
+                position={position}
+                dimension={dimension}
+            />;
+        });
+    };
+
     return (
         <div className={styles.container}>
+            <span className={styles.background} />
             {renderUsers()}
             {localUser.current ?
                 <Player
@@ -116,6 +187,7 @@ export default function Engine() {
                     direction={localUser.current.dir}
                 />
                 : null}
+            {renderWalls(objectArray)}
         </div>
     );
 }
