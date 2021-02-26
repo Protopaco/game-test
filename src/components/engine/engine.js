@@ -76,6 +76,7 @@ export default function Engine() {
     const [userArray, setUserArray] = useState([]);
     const localUser = useRef(null);
     const [disable, setDisable] = useState(false);
+    const [idleTimer, setIdleTimer] = useState();
 
     useEffect(() => {
         socket.on('CREATE_USER', ({ newUser, userArray }) => {
@@ -102,6 +103,7 @@ export default function Engine() {
     const handleKeyPress = (e) => {
         e.preventDefault();
         if (localUser.current && !disable) {
+            clearTimeout(idleTimer);
             setDisable(true);
             const { position, speed, dimension } = localUser.current;
             if (e.key === 'ArrowUp') {
@@ -148,9 +150,9 @@ export default function Engine() {
                     };
                 }
             }
-            setTimeout(() => {
-                localUser.current = { ...localUser.current };
-            }, 1000);
+            setIdleTimer(setTimeout(() => {
+                localUser.current = { ...localUser.current, dir: 'idle' };
+            }, [400]));
         }
     };
 

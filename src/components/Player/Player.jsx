@@ -5,14 +5,18 @@ import styles from '../engine/engine.module.scss';
 export default function Player({ position, direction, userName }) {
     const [frame, setFrame] = useState(0);
     const [sprite, setSprite] = useState('/run3/adventurer-run3-00.png');
-    const [currentPosition, setCurrentPosition] = useState({ x: 0, y: 0 });
     const [idleFrame, setIdleFrame] = useState(0);
+    const runDirections = ['up', 'down', 'left', 'right'];
 
     useEffect(() => {
         setTimeout(() => {
-            runAnimation();
+            if (runDirections.includes(direction)) {
+                runAnimation();
+            } else {
+                idleAnimation();
+            }
         }, 120);
-    }, [frame]);
+    }, [frame, idleFrame]);
 
     const runAnimation = () => {
         frame < 5 ? setFrame(frame + 1) : setFrame(0);
