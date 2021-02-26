@@ -54,12 +54,10 @@ export default function Engine() {
 
     useEffect(() => {
         socket.emit('CREATE_USER', null);
-        if (localUser.current) {
-            console.log(localUser.current);
-            setInterval(() => {
-                socket.emit('GAME_STATE', localUser.current);
-            }, 500);
-        }
+
+        setInterval(() => {
+            socket.emit('GAME_STATE', localUser.current);
+        }, 500);
     }, []);
 
 
