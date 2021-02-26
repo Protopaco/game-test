@@ -70,12 +70,12 @@ const Island1 = {
 
 
 
+const objectArray = [Wall1, Wall2, Wall3, Wall4, Wall5, Island1];
 
 export default function Engine() {
     const [userArray, setUserArray] = useState([]);
     const localUser = useRef(null);
     const [disable, setDisable] = useState(false);
-    const objectArray = [Wall1, Wall2, Wall3, Wall4, Wall5, Island1, ...userArray];
 
     useEffect(() => {
         socket.on('CREATE_USER', ({ newUser, userArray }) => {
@@ -107,7 +107,7 @@ export default function Engine() {
             if (e.key === 'ArrowUp') {
                 const newPosition = CHANGE_POSITION.UP(position, speed);
 
-                if (checkCollision(objectArray, newPosition, dimension)) {
+                if (checkCollision([objectArray, ...userArray], newPosition, dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
@@ -118,7 +118,7 @@ export default function Engine() {
             if (e.key === 'ArrowDown') {
                 const newPosition = CHANGE_POSITION.DOWN(position, speed);
 
-                if (checkCollision(objectArray, newPosition, dimension)) {
+                if (checkCollision([objectArray, ...userArray], newPosition, dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
@@ -129,7 +129,7 @@ export default function Engine() {
             if (e.key === 'ArrowLeft') {
                 const newPosition = CHANGE_POSITION.LEFT(position, speed);
 
-                if (checkCollision(objectArray, newPosition, dimension)) {
+                if (checkCollision([objectArray, ...userArray], newPosition, dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
@@ -140,7 +140,7 @@ export default function Engine() {
             if (e.key === 'ArrowRight') {
                 const newPosition = CHANGE_POSITION.RIGHT(position, speed);
 
-                if (checkCollision(objectArray, newPosition, dimension)) {
+                if (checkCollision([objectArray, ...userArray], newPosition, dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
