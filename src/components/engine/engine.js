@@ -5,6 +5,7 @@ import Player from '../Player/Player';
 import io from 'socket.io-client';
 import Wall from '../Wall/Wall';
 import checkCollision from '../../utils/checkCollision';
+import Janitor from '../Janitor/Janitor';
 
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
@@ -49,30 +50,42 @@ const Wall2 = {
 };
 
 const Wall3 = {
-    position: { x: 50, y: 475 },
-    dimension: { x: 300, y: 25 }
+    position: { x: 50, y: 450 },
+    dimension: { x: 300, y: 50 }
 };
 
 const Wall4 = {
-    position: { x: 475, y: 50 },
+    position: { x: 500, y: 25 },
     dimension: { x: 25, y: 800 }
 };
 
 const Wall5 = {
-    position: { x: 25, y: 825 },
-    dimension: { x: 450, y: 25 }
+    position: { x: 25, y: 800 },
+    dimension: { x: 500, y: 25 }
 };
 
 const Island1 = {
-    position: { x: 175, y: 175 },
-    dimension: { x: 75, y: 75 }
+    position: { x: 150, y: 150 },
+    dimension: { x: 100, y: 100 }
 };
 
+const bob = {
+    position: { x: 50, y: 50 },
+    dimension: { x: 50, y: 50 },
+    storyBeat: 0,
+    texts: [
+        'Bob: HI Paul!',
+        'Bob: Hi Sjaan!',
+        'Bob: Hi Evan!'
+    ]
+};
 
 
 const objectArray = [Wall1, Wall2, Wall3, Wall4, Wall5, Island1];
 
-export default function Engine() {
+const npcArray = [bob];
+
+export default function Engine({ text, setText }) {
     const [userArray, setUserArray] = useState([]);
     const localUser = useRef(null);
     const [disable, setDisable] = useState(false);
@@ -109,7 +122,10 @@ export default function Engine() {
             if (e.key === 'ArrowUp') {
                 const newPosition = CHANGE_POSITION.UP(position, speed);
 
-                if (checkCollision([...objectArray], newPosition, dimension)) {
+                if (checkCollision(
+                    [...objectArray, ...npcArray],
+                    newPosition,
+                    dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
@@ -120,7 +136,10 @@ export default function Engine() {
             if (e.key === 'ArrowDown') {
                 const newPosition = CHANGE_POSITION.DOWN(position, speed);
 
-                if (checkCollision([...objectArray], newPosition, dimension)) {
+                if (checkCollision(
+                    [...objectArray, ...npcArray],
+                    newPosition,
+                    dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
@@ -131,7 +150,10 @@ export default function Engine() {
             if (e.key === 'ArrowLeft') {
                 const newPosition = CHANGE_POSITION.LEFT(position, speed);
 
-                if (checkCollision([...objectArray], newPosition, dimension)) {
+                if (checkCollision(
+                    [...objectArray, ...npcArray],
+                    newPosition,
+                    dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
@@ -142,7 +164,10 @@ export default function Engine() {
             if (e.key === 'ArrowRight') {
                 const newPosition = CHANGE_POSITION.RIGHT(position, speed);
 
-                if (checkCollision([...objectArray], newPosition, dimension)) {
+                if (checkCollision(
+                    [...objectArray, ...npcArray],
+                    newPosition,
+                    dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
@@ -150,6 +175,19 @@ export default function Engine() {
                     };
                 }
             }
+            if (e.key === ' ') {
+                npcArray.some(npc => {
+                    if (localUser.current.position.x - npc.position.x === 50 ||
+                        localUser.current.position.y - npc.position.y === 50) {
+                        setText([...text, bob.texts[bob.storyBeat]]);
+                        bob.storyBeat++;
+                    }
+
+
+                });
+            }
+
+
             setIdleTimer(setTimeout(() => {
                 localUser.current = { ...localUser.current, dir: 'idle' };
             }, [400]));
@@ -192,6 +230,11 @@ export default function Engine() {
                 />
                 : null}
             {renderWalls(objectArray)}
+            <Janitor
+                position={bob.position}
+                storyBeat={bob.storyBeat}
+            />
+
         </div>
     );
 }

@@ -1,0 +1,19 @@
+.janitor{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid red;
+    height: 50px;
+}
+
+.name{
+    height: 0;
+    margin: 0;
+    padding: 0;
+    color: purple;
+}
+
+.sprite{
+    height: 50px;
+    width: auto;
+}
