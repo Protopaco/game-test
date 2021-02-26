@@ -47,7 +47,6 @@ export default function Engine() {
         });
 
         socket.on('GAME_STATE', response => {
-            console.log(localUser.current);
             setUserArray(response);
             setDisable(false);
         });
