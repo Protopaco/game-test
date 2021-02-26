@@ -107,7 +107,7 @@ export default function Engine() {
             if (e.key === 'ArrowUp') {
                 const newPosition = CHANGE_POSITION.UP(position, speed);
 
-                if (checkCollision([...objectArray, ...userArray], newPosition, dimension)) {
+                if (checkCollision([...objectArray], newPosition, dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
@@ -118,7 +118,7 @@ export default function Engine() {
             if (e.key === 'ArrowDown') {
                 const newPosition = CHANGE_POSITION.DOWN(position, speed);
 
-                if (checkCollision([...objectArray, ...userArray], newPosition, dimension)) {
+                if (checkCollision([...objectArray], newPosition, dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
@@ -129,7 +129,7 @@ export default function Engine() {
             if (e.key === 'ArrowLeft') {
                 const newPosition = CHANGE_POSITION.LEFT(position, speed);
 
-                if (checkCollision([...objectArray, ...userArray], newPosition, dimension)) {
+                if (checkCollision([...objectArray], newPosition, dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
@@ -140,7 +140,7 @@ export default function Engine() {
             if (e.key === 'ArrowRight') {
                 const newPosition = CHANGE_POSITION.RIGHT(position, speed);
 
-                if (checkCollision([...objectArray, ...userArray], newPosition, dimension)) {
+                if (checkCollision([...objectArray], newPosition, dimension)) {
                     localUser.current = {
                         ...localUser.current,
                         position: newPosition,
@@ -162,6 +162,7 @@ export default function Engine() {
                 key={user.id}
                 position={user.position}
                 direction={user.dir}
+                userName={user.userName}
             />;
         });
     };
@@ -185,6 +186,7 @@ export default function Engine() {
                     key={localUser.current.id}
                     position={localUser.current.position}
                     direction={localUser.current.dir}
+                    userName={' '}
                 />
                 : null}
             {renderWalls(objectArray)}
