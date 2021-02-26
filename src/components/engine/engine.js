@@ -95,7 +95,7 @@ export default function Engine() {
 
         setInterval(() => {
             socket.emit('GAME_STATE', localUser.current);
-        }, 250);
+        }, 100);
     }, []);
 
 
