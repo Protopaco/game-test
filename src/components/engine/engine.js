@@ -54,11 +54,18 @@ export default function Engine() {
 
     useEffect(() => {
         socket.emit('CREATE_USER', null);
-
         setInterval(() => {
             socket.emit('GAME_STATE', null);
-        }, 500);
+        }, 300);
+        setInterval(() => {
+            animate();
+        });
+
     }, []);
+
+    const animate = () => {
+        return 1;
+    };
 
 
     const handleKeyPress = (e) => {
