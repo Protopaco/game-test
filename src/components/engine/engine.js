@@ -7,6 +7,8 @@ import Wall from '../Wall/Wall';
 import checkCollision from '../../utils/checkCollision';
 import Janitor from '../Janitor/Janitor';
 
+import { objectArray } from '../../data/walls';
+
 
 const serverUrl = process.env.REACT_APP_SERVER_URL;
 const socket = io.connect(serverUrl);
@@ -38,37 +40,6 @@ const CHANGE_POSITION = {
     },
 };
 
-
-const Wall1 = {
-    position: { x: 25, y: 25 },
-    dimension: { x: 25, y: 800 }
-};
-
-const Wall2 = {
-    position: { x: 50, y: 25 },
-    dimension: { x: 450, y: 25 }
-};
-
-const Wall3 = {
-    position: { x: 50, y: 450 },
-    dimension: { x: 300, y: 50 }
-};
-
-const Wall4 = {
-    position: { x: 500, y: 25 },
-    dimension: { x: 25, y: 800 }
-};
-
-const Wall5 = {
-    position: { x: 25, y: 800 },
-    dimension: { x: 500, y: 25 }
-};
-
-const Island1 = {
-    position: { x: 150, y: 150 },
-    dimension: { x: 100, y: 100 }
-};
-
 const bob = {
     position: { x: 50, y: 50 },
     dimension: { x: 50, y: 50 },
@@ -80,12 +51,9 @@ const bob = {
     ]
 };
 
-
-const objectArray = [Wall1, Wall2, Wall3, Wall4, Wall5, Island1];
-
 const npcArray = [bob];
 
-export default function Engine({ text, setText }) {
+export default function Engine({ text, setText, engineFocused }) {
     const [userArray, setUserArray] = useState([]);
     const localUser = useRef(null);
     const [disable, setDisable] = useState(false);
@@ -194,7 +162,7 @@ export default function Engine({ text, setText }) {
         }
     };
 
-    useEvent('keydown', handleKeyPress);
+    useEvent('keydown', handleKeyPress, engineFocused);
 
     const renderUsers = () => {
         return userArray.map(user => {
@@ -218,7 +186,9 @@ export default function Engine({ text, setText }) {
     };
 
     return (
-        <div className={styles.container}>
+        <div className={styles.container}
+            onClick={() => { engineFocused.current = true; }}
+        >
             <span className={styles.background} />
             {renderUsers()}
             {localUser.current ?

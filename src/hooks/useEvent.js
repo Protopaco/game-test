@@ -1,12 +1,14 @@
 
 import { useEffect } from 'react';
 
-export default function useEvent(event, handler) {
+export default function useEvent(event, handler, engineFocused) {
     useEffect(() => {
-        window.addEventListener(event, handler);
+        if (engineFocused.current) {
+            window.addEventListener(event, handler);
 
-        return function cleanup() {
-            window.removeEventListener(event, handler);
-        };
+            return function cleanup() {
+                window.removeEventListener(event, handler);
+            };
+        }
     });
 }

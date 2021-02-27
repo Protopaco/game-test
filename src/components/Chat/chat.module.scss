@@ -2,4 +2,7 @@
 .chatContainer {
     display: flex;
     flex-direction: column;
+    height: 500px;
+    width: 100vw;
+    border: 1px solid salmon;
 }
